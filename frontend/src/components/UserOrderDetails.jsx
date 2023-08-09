@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BsFillBagFill } from 'react-icons/bs';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from '../styles/styles';
 import { getAllOrdersOfUser } from '../redux/actions/order';
@@ -12,12 +12,14 @@ import { toast } from 'react-toastify';
 
 const UserOrderDetails = () => {
   const { orders } = useSelector((state) => state.order);
-  const { user } = useSelector((state) => state.user);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { seller } = useSelector((state) => state.seller);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [comment, setComment] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [rating, setRating] = useState(1);
+  const navigate = useNavigate();
 
   const { id } = useParams();
 
@@ -26,7 +28,7 @@ const UserOrderDetails = () => {
   }, [dispatch, user._id]);
 
   const data = orders && orders.find((item) => item._id === id);
-
+  // console.log(data.cart[0].shopId);
   const reviewHandler = async (e) => {
     await axios
       .put(
@@ -66,6 +68,29 @@ const UserOrderDetails = () => {
       });
   };
 
+  const handleMessageSubmit = async () => {
+    if (isAuthenticated) {
+      const groupTitle = data._id + user._id;
+      const userId = user._id;
+      const sellerId = data.cart[0].shopId;
+      // const sellerId = seller._id;
+      // const sellerId = data.shop._id;
+      await axios
+        .post(`${server}/conversation/create-new-conversation`, {
+          groupTitle,
+          userId,
+          sellerId,
+        })
+        .then((res) => {
+          navigate(`/inbox?${res.data.conversation._id}`);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+        });
+    } else {
+      toast.error('Please login to create a conversation');
+    }
+  };
   return (
     <div className={`py-4 min-h-screen ${styles.section}`}>
       <div className='w-full flex items-center justify-between'>
@@ -237,9 +262,15 @@ const UserOrderDetails = () => {
         </div>
       </div>
       <br />
-      <Link to='/'>
+      {/* <Link to='/'>
         <div className={`${styles.button} text-white`}>Send Message</div>
-      </Link>
+      </Link> */}
+      <div
+        onClick={handleMessageSubmit}
+        className={`${styles.button} text-white`}
+      >
+        Send Message
+      </div>
       <br />
       <br />
     </div>

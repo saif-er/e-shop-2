@@ -20,6 +20,7 @@ import Ratings from './Ratings';
 import axios from 'axios';
 
 const ProductDetails = ({ data }) => {
+  // console.log(data);
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -93,7 +94,8 @@ const ProductDetails = ({ data }) => {
     if (isAuthenticated) {
       const groupTitle = data._id + user._id;
       const userId = user._id;
-      const sellerId = data.shop._id;
+      const sellerId = data.shopId;
+      // const sellerId = data.shop._id;
       await axios
         .post(`${server}/conversation/create-new-conversation`, {
           groupTitle,
