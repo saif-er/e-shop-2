@@ -92,6 +92,7 @@ const ProductDetails = ({ data }) => {
 
   const handleMessageSubmit = async () => {
     if (isAuthenticated) {
+      debugger;
       const groupTitle = data._id + user._id;
       const userId = user._id;
       const sellerId = data.shopId;
