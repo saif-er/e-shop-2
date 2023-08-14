@@ -13,9 +13,20 @@ const addNewProductSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please enter your product category!'],
   },
-  tags: {
-    type: String,
-  },
+  tags: [
+    {
+      key: {
+        type: Number,
+      },
+      label: {
+        type: String,
+        // required: [true, 'Please enter product tag!'],
+      },
+    },
+  ],
+  // tags: {
+  //   type: String,
+  // },
   originalPrice: {
     type: Number,
   },

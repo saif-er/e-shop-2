@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { createProduct } from '../../redux/actions/add-new-product';
 import { categoriesData } from '../../static/data';
 import { toast } from 'react-toastify';
+import ChipsArray from '../../helper/chip';
 
-const AddNewProduct = () => {
+const CreateProduct = () => {
   const { seller } = useSelector((state) => state.seller);
   const { success, error } = useSelector((state) => state.newProducts);
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ const AddNewProduct = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [tags, setTags] = useState('');
+  const [tags, setTags] = useState([]);
+  // const [tags, setTags] = useState('');
   const [originalPrice, setOriginalPrice] = useState();
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
@@ -80,6 +82,18 @@ const AddNewProduct = () => {
     );
   };
 
+  const handleTagInputKeyPress = (e) => {
+    if (e.key === 'Enter' && e.target.value.trim() !== '') {
+      setTags((prevTags) => [
+        ...prevTags,
+        { key: prevTags.length, label: e.target.value },
+      ]);
+      setTimeout(() => {
+        e.target.value = '';
+      }, 0);
+    }
+  };
+
   return (
     <div className='w-[90%] 800px:w-[50%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll'>
       <h5 className='text-[30px] font-Poppins text-center'>Add New Product</h5>
@@ -91,6 +105,7 @@ const AddNewProduct = () => {
             Name <span className='text-red-500'>*</span>
           </label>
           <input
+            required
             type='text'
             name='name'
             value={name}
@@ -122,6 +137,7 @@ const AddNewProduct = () => {
             Category <span className='text-red-500'>*</span>
           </label>
           <select
+            required
             className='w-full mt-2 border h-[35px] rounded-[5px]'
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -137,15 +153,23 @@ const AddNewProduct = () => {
         </div>
         <br />
         <div>
-          <label className='pb-2'>Tags</label>
+          <label className='pb-2'>
+            Tags <span className='text-red-500'>*</span>
+          </label>
           <input
             type='text'
             name='tags'
-            value={tags}
+            // value={tags[-1]}
+            // value={tags}
             className='mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-            onChange={(e) => setTags(e.target.value)}
+            // onChange={(e) => setTags(e.target.value)}
+            onKeyDown={handleTagInputKeyPress}
             placeholder='Enter your product tags...'
           />
+        </div>
+        <div>
+          {/* {ChipsArray()} */}
+          <ChipsArray tags={tags} setTags={setTags} />
         </div>
         <br />
         <div>
@@ -165,6 +189,7 @@ const AddNewProduct = () => {
             Price (With Discount) <span className='text-red-500'>*</span>
           </label>
           <input
+            required
             type='number'
             name='price'
             value={discountPrice}
@@ -179,6 +204,7 @@ const AddNewProduct = () => {
             Product Stock <span className='text-red-500'>*</span>
           </label>
           <input
+            required
             type='number'
             name='price'
             value={stock}
@@ -228,4 +254,4 @@ const AddNewProduct = () => {
   );
 };
 
-export default AddNewProduct;
+export default CreateProduct;
