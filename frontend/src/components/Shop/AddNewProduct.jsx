@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -6,10 +6,13 @@ import { createProduct } from '../../redux/actions/add-new-product';
 import { categoriesData } from '../../static/data';
 import { toast } from 'react-toastify';
 import ChipsArray from '../../helper/chip';
+import { Editor } from '@tinymce/tinymce-react';
+import TinyEditor from '../../helper/tiny';
 
 const CreateProduct = () => {
   const { seller } = useSelector((state) => state.seller);
   const { success, error } = useSelector((state) => state.newProducts);
+  const tagInputRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -91,6 +94,12 @@ const CreateProduct = () => {
       setTimeout(() => {
         e.target.value = '';
       }, 0);
+
+      e.preventDefault();
+
+      if (tagInputRef.current) {
+        tagInputRef.current.focus();
+      }
     }
   };
 
@@ -130,6 +139,9 @@ const CreateProduct = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder='Enter your product description...'
           ></textarea>
+          <TinyEditor />
+          {/* <Editor apiKey='suupfl25ycnno16lor0unpo0nu5ra4v5forlrcx45kxx39vv' /> */}
+          {/* <Editor apiKey={process.env.TINY_API_KEY} /> */}
         </div>
         <br />
         <div>
@@ -159,7 +171,7 @@ const CreateProduct = () => {
           <input
             type='text'
             name='tags'
-            // value={tags[-1]}
+            ref={tagInputRef}
             // value={tags}
             className='mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
             // onChange={(e) => setTags(e.target.value)}
