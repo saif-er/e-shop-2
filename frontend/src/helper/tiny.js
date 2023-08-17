@@ -1,13 +1,17 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveFullDescription } from '../redux/actions/add-new-product';
+import { toast } from 'react-toastify';
 
-const TinyEditor = () => {
+const TinyEditor = ({ fullProductDetails, setFullProductDetails }) => {
   const editorRef = useRef(null);
-  const log = () => {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-    }
+
+  const editorChangeHandler = (e) => {
+    let fullDescriptionStr = editorRef.current.getContent();
+    setFullProductDetails(fullDescriptionStr);
   };
+
   return (
     <>
       <Editor
@@ -30,8 +34,15 @@ const TinyEditor = () => {
           content_style:
             'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
         }}
+        value={fullProductDetails}
+        onEditorChange={editorChangeHandler}
       />
-      <button onClick={log}>Log editor content</button>
+      {/* <button
+        className='mt-2 cursor-pointer appearance-none text-center block w-auto px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+        onClick={log}
+      >
+        Save Product Detail
+      </button> */}
     </>
   );
 };

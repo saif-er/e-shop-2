@@ -6,13 +6,16 @@ import { createProduct } from '../../redux/actions/add-new-product';
 import { categoriesData } from '../../static/data';
 import { toast } from 'react-toastify';
 import ChipsArray from '../../helper/chip';
-import { Editor } from '@tinymce/tinymce-react';
+// import { Editor } from '@tinymce/tinymce-react';
 import TinyEditor from '../../helper/tiny';
+// import { Editor } from '@tinymce/tinymce-react';
 
 const CreateProduct = () => {
   const { seller } = useSelector((state) => state.seller);
   const { success, error } = useSelector((state) => state.newProducts);
   const tagInputRef = useRef(null);
+  // const editorRef = useRef(null);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -25,13 +28,14 @@ const CreateProduct = () => {
   const [originalPrice, setOriginalPrice] = useState();
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
+  const [fullProductDetails, setFullProductDetails] = useState();
 
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
     if (success) {
-      toast.success('Product created successfully!');
+      toast.success('Added New Product Successfully!');
       navigate('/dashboard');
       window.location.reload();
     }
@@ -70,6 +74,7 @@ const CreateProduct = () => {
     newForm.append('discountPrice', discountPrice);
     newForm.append('stock', stock);
     newForm.append('shopId', seller._id);
+    newForm.append('fullProductDetails', fullProductDetails);
     dispatch(
       createProduct({
         name,
@@ -81,6 +86,7 @@ const CreateProduct = () => {
         stock,
         shopId: seller._id,
         images,
+        fullProductDetails,
       })
     );
   };
@@ -126,12 +132,12 @@ const CreateProduct = () => {
         <br />
         <div>
           <label className='pb-2'>
-            Description <span className='text-red-500'>*</span>
+            Short Description <span className='text-red-500'>*</span>
           </label>
           <textarea
             cols='30'
             required
-            rows='8'
+            rows='5'
             type='text'
             name='description'
             value={description}
@@ -139,10 +145,21 @@ const CreateProduct = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder='Enter your product description...'
           ></textarea>
-          <TinyEditor />
-          {/* <Editor apiKey='suupfl25ycnno16lor0unpo0nu5ra4v5forlrcx45kxx39vv' /> */}
-          {/* <Editor apiKey={process.env.TINY_API_KEY} /> */}
         </div>
+        <br />
+        <div>
+          <label className='pb-2'>
+            Full Product Details & Images
+            <span className='text-red-500'>*</span>
+          </label>
+          <div className='mt-2'>
+            <TinyEditor
+              fullProductDetails={fullProductDetails}
+              setFullProductDetails={setFullProductDetails}
+            />
+          </div>
+        </div>
+
         <br />
         <div>
           <label className='pb-2'>
