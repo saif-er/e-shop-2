@@ -7,19 +7,21 @@ import { toast } from 'react-toastify';
 const TinyEditor = ({ fullProductDetails, setFullProductDetails }) => {
   const editorRef = useRef(null);
 
-  const editorChangeHandler = (e) => {
-    let fullDescriptionStr = editorRef.current.getContent();
+  const editorChangeHandler = (newValue, editor) => {
+    let fullDescriptionStr = editor.getContent();
+    // let fullDescriptionStr = editorRef.current.getContent();
     setFullProductDetails(fullDescriptionStr);
   };
 
   return (
     <>
       <Editor
+        // apiKey={process.env.TINY_API_KEY}
         apiKey='suupfl25ycnno16lor0unpo0nu5ra4v5forlrcx45kxx39vv'
         onInit={(evt, editor) => (editorRef.current = editor)}
         initialValue='<p>This is the initial content of the editor.</p>'
         init={{
-          height: 500,
+          height: 1000,
           menubar: false,
           plugins: [
             'advlist autolink lists link image charmap print preview anchor',

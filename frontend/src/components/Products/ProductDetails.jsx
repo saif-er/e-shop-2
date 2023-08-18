@@ -28,6 +28,7 @@ const ProductDetails = ({ data }) => {
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -259,6 +260,16 @@ const ProductDetailsInfo = ({
 }) => {
   const [active, setActive] = useState(1);
 
+  useEffect(() => {
+    setTimeout(() => {
+      const divFullProductDetail = document.querySelector(
+        '.full-product-detail'
+      );
+      let html = data.fullProductDetails;
+      divFullProductDetail.insertAdjacentHTML('afterbegin', html);
+    }, 100);
+  }, []);
+
   return (
     <>
       <div className='bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded'>
@@ -400,7 +411,13 @@ const ProductDetailsInfo = ({
           </h5>
         </div>
 
-        <div>Full Product Details & Images</div>
+        <div
+          // onLoad={fullProductDetailsLoad}
+          className='full-product-detail'
+        >
+          {/* {fullProductDetailsLoad()} */}
+        </div>
+        {/* <div>Full Product Details & Images</div> */}
       </div>
     </>
   );
