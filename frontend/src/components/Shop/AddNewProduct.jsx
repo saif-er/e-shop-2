@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createProduct } from '../../redux/actions/product';
+import { createProduct } from '../../redux/actions/add-new-product';
 import { categoriesData } from '../../static/data';
 import { toast } from 'react-toastify';
+import ChipsArray from '../../helper/chip';
+// import { Editor } from '@tinymce/tinymce-react';
+import TinyEditor from '../../helper/tiny';
+// import { Editor } from '@tinymce/tinymce-react';
 
 const CreateProduct = () => {
   const { seller } = useSelector((state) => state.seller);
-  const { success, error } = useSelector((state) => state.products);
+  const { success, error } = useSelector((state) => state.newProducts);
+  const tagInputRef = useRef(null);
+  // const editorRef = useRef(null);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -16,17 +23,19 @@ const CreateProduct = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [tags, setTags] = useState('');
+  const [tags, setTags] = useState([]);
+  // const [tags, setTags] = useState('');
   const [originalPrice, setOriginalPrice] = useState();
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
+  const [fullProductDetails, setFullProductDetails] = useState();
 
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
     if (success) {
-      toast.success('Product created successfully!');
+      toast.success('Added New Product Successfully!');
       navigate('/dashboard');
       window.location.reload();
     }
@@ -65,6 +74,7 @@ const CreateProduct = () => {
     newForm.append('discountPrice', discountPrice);
     newForm.append('stock', stock);
     newForm.append('shopId', seller._id);
+    newForm.append('fullProductDetails', fullProductDetails);
     dispatch(
       createProduct({
         name,
@@ -76,13 +86,32 @@ const CreateProduct = () => {
         stock,
         shopId: seller._id,
         images,
+        fullProductDetails,
       })
     );
   };
 
+  const handleTagInputKeyPress = (e) => {
+    if (e.key === 'Enter' && e.target.value.trim() !== '') {
+      setTags((prevTags) => [
+        ...prevTags,
+        { key: prevTags.length, label: e.target.value },
+      ]);
+      setTimeout(() => {
+        e.target.value = '';
+      }, 0);
+
+      e.preventDefault();
+
+      if (tagInputRef.current) {
+        tagInputRef.current.focus();
+      }
+    }
+  };
+
   return (
-    <div className='w-[90%] 800px:w-[50%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll'>
-      <h5 className='text-[30px] font-Poppins text-center'>Create Product</h5>
+    <div className='w-[90%] 800px:w-[90%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll mt-10'>
+      <h5 className='text-[30px] font-Poppins text-center'>Add New Product</h5>
       {/* create product form */}
       <form onSubmit={handleSubmit}>
         <br />
@@ -91,6 +120,7 @@ const CreateProduct = () => {
             Name <span className='text-red-500'>*</span>
           </label>
           <input
+            required
             type='text'
             name='name'
             value={name}
@@ -102,12 +132,12 @@ const CreateProduct = () => {
         <br />
         <div>
           <label className='pb-2'>
-            Description <span className='text-red-500'>*</span>
+            Short Description <span className='text-red-500'>*</span>
           </label>
           <textarea
             cols='30'
             required
-            rows='8'
+            rows='5'
             type='text'
             name='description'
             value={description}
@@ -119,9 +149,24 @@ const CreateProduct = () => {
         <br />
         <div>
           <label className='pb-2'>
+            Full Product Details & Images
+            <span className='text-red-500'>*</span>
+          </label>
+          <div className='mt-2'>
+            <TinyEditor
+              fullProductDetails={fullProductDetails}
+              setFullProductDetails={setFullProductDetails}
+            />
+          </div>
+        </div>
+
+        <br />
+        <div>
+          <label className='pb-2'>
             Category <span className='text-red-500'>*</span>
           </label>
           <select
+            required
             className='w-full mt-2 border h-[35px] rounded-[5px]'
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -137,15 +182,23 @@ const CreateProduct = () => {
         </div>
         <br />
         <div>
-          <label className='pb-2'>Tags</label>
+          <label className='pb-2'>
+            Tags <span className='text-red-500'>*</span>
+          </label>
           <input
             type='text'
             name='tags'
-            value={tags}
+            ref={tagInputRef}
+            // value={tags}
             className='mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-            onChange={(e) => setTags(e.target.value)}
+            // onChange={(e) => setTags(e.target.value)}
+            onKeyDown={handleTagInputKeyPress}
             placeholder='Enter your product tags...'
           />
+        </div>
+        <div>
+          {/* {ChipsArray()} */}
+          <ChipsArray tags={tags} setTags={setTags} />
         </div>
         <br />
         <div>
@@ -165,6 +218,7 @@ const CreateProduct = () => {
             Price (With Discount) <span className='text-red-500'>*</span>
           </label>
           <input
+            required
             type='number'
             name='price'
             value={discountPrice}
@@ -179,6 +233,7 @@ const CreateProduct = () => {
             Product Stock <span className='text-red-500'>*</span>
           </label>
           <input
+            required
             type='number'
             name='price'
             value={stock}
