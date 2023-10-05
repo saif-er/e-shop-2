@@ -16,8 +16,8 @@ const TinyEditor = ({ fullProductDetails, setFullProductDetails }) => {
   return (
     <>
       <Editor
-        // apiKey={process.env.TINY_API_KEY}
-        apiKey='suupfl25ycnno16lor0unpo0nu5ra4v5forlrcx45kxx39vv'
+        apiKey={process.env.REACT_APP_TINY_API_KEY}
+        // apiKey='suupfl25ycnno16lor0unpo0nu5ra4v5forlrcx45kxx39vv'
         onInit={(evt, editor) => (editorRef.current = editor)}
         initialValue='<p>This is the initial content of the editor.</p>'
         init={{
