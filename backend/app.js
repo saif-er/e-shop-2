@@ -5,10 +5,21 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+// app.use(
+//   cors({
+//     // origin: ['https://eshop-tutorial-pyri.vercel.app',],
+//     origin: 'http://localhost:3000',
+//     credentials: true,
+//   })
+// );
+
 app.use(
   cors({
-    // origin: ['https://eshop-tutorial-pyri.vercel.app',],
-    origin: 'http://localhost:3000',
+    origin: [
+      'https://eshop-multivendor-uniqueiit.vercel.app',
+      'http://localhost:3000',
+    ],
+    methods: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD'],
     credentials: true,
   })
 );
